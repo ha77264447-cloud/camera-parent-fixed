@@ -1043,7 +1043,19 @@ class StreamService {
     }
     _pendingRemoteIceByViewer.remove(viewerId);
 
-    final pc = await createPeerConnection({'iceServers': _iceServers});
+    final pc = await createPeerConnection({
+      'iceServers': _iceServers,
+      'iceTransportPolicy': 'all',
+    });
+
+    // ✅ Timeout للـ ICE gathering
+    Future.delayed(Duration(seconds: 20), () {
+      if (!_peerConnections.containsValue(pc)) return;
+      if (pc.connectionState == RTCPeerConnectionState.RTCPeerConnectionStateConnecting) {
+        debugPrint("[StreamService] ICE timeout - force reconnect");
+        _reconnectWebSocket();
+      }
+    });
     _peerConnections[viewerId] = pc;
 
     pc.onTrack = (RTCTrackEvent event) {
