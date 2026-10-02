@@ -1,0 +1,32 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+ios/
+windows/
+web/
+macos/
+.env
+*.lock
+
+# Local Gradle state
+android/.gradle/
+
+# Never commit Termux home files
+.ssh/
+.bash_history
+.bashrc
+.gitconfig
+.lesshst
+.termux/
+/storage/
+*.bak
+*.backup
+*.before-*
+
+android/key.properties
+*.jks
+*.keystore
