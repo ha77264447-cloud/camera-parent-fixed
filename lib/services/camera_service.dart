@@ -52,3 +52,94 @@ class CameraService {
     return navigator.mediaDevices.getUserMedia(constraints);
   }
 }
+
+  // ═══════════════════════════════════════════════════════════
+  // تسجيل دخول الوالد
+  // ═══════════════════════════════════════════════════════════
+  static Future<Map<String, dynamic>> parentLogin(
+      String username, String password) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$server/parent/login"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"username": username, "password": password}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      } else {
+        throw Exception("Login failed: ${res.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("[CameraService] parentLogin failed: $e");
+      rethrow;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // تسجيل حساب والد جديد
+  // ═══════════════════════════════════════════════════════════
+  static Future<Map<String, dynamic>> parentRegister(
+      String username, String password) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$server/parent/register"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"username": username, "password": password}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (res.statusCode == 201 || res.statusCode == 200) {
+        return jsonDecode(res.body);
+      } else {
+        throw Exception("Register failed: ${res.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("[CameraService] parentRegister failed: $e");
+      rethrow;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // نسيان جهاز (حذفه)
+  // ═══════════════════════════════════════════════════════════
+  static Future<void> forgetDevice(String deviceId, String token) async {
+    try {
+      final res = await http.delete(
+        Uri.parse("$server/device/$deviceId"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (res.statusCode != 200 && res.statusCode != 204) {
+        throw Exception("Forget device failed: ${res.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("[CameraService] forgetDevice failed: $e");
+      rethrow;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // فصل الجهاز (unpair)
+  // ═══════════════════════════════════════════════════════════
+  static Future<void> unpairDevice(String token) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$server/device/unpair"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (res.statusCode != 200) {
+        throw Exception("Unpair failed: ${res.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("[CameraService] unpairDevice failed: $e");
+      rethrow;
+    }
+  }
+}
