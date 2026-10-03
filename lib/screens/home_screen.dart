@@ -100,11 +100,13 @@ class _HomeScreenState extends State<HomeScreen> {
       _authError = null;
     });
 
-    final token = register
+    final response = register
         ? await CameraService.parentRegister(username, password)
         : await CameraService.parentLogin(username, password);
+    
+    final token = response['data']['admin_token'] as String? ?? '';
 
-    if (token == null || token.isEmpty) {
+    if (token.isEmpty) {
       setState(() {
         _authLoading = false;
         _authError = register
