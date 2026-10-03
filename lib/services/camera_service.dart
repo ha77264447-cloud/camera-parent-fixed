@@ -8,7 +8,7 @@ class CameraService {
   static const String server = "https://camera-parent-server.onrender.com";
 
   // ═══════════════════════════════════════════════════════════
-  // ICE Servers - مع fallback متعدد
+  // ICE Servers
   // ═══════════════════════════════════════════════════════════
 
   static Future<List<Map<String, dynamic>>> fetchIceServers() async {
@@ -28,7 +28,6 @@ class CameraService {
       debugPrint("[CameraService] fetchIceServers failed: $e");
     }
 
-    // ✅ fallback: STUN servers متعددة
     return [
       {"urls": "stun:stun.l.google.com:19302"},
       {"urls": "stun:stun1.l.google.com:19302"},
@@ -99,15 +98,15 @@ class CameraService {
   }
 
   // ═══════════════════════════════════════════════════════════
-  // نسيان جهاز (حذفه)
+  // نسيان/حذف جهاز
   // ═══════════════════════════════════════════════════════════
-  static Future<void> forgetDevice(String deviceId, String token) async {
+  static Future<void> forgetDevice(String sessionId, String adminToken) async {
     try {
       final res = await http.delete(
-        Uri.parse("$server/device/$deviceId"),
+        Uri.parse("$server/camera/sessions/$sessionId"),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          "X-Admin-Token": adminToken,
         },
       ).timeout(const Duration(seconds: 10));
 
@@ -123,13 +122,13 @@ class CameraService {
   // ═══════════════════════════════════════════════════════════
   // فصل الجهاز (unpair)
   // ═══════════════════════════════════════════════════════════
-  static Future<void> unpairDevice(String token) async {
+  static Future<void> unpairDevice(String deviceToken) async {
     try {
       final res = await http.post(
-        Uri.parse("$server/device/unpair"),
+        Uri.parse("$server/pairing/unpair"),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          "X-Device-Token": deviceToken,
         },
       ).timeout(const Duration(seconds: 10));
 
