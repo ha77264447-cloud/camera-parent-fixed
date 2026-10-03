@@ -1,0 +1,38 @@
+name: Flutter Build APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-child:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build apk --release --flavor child
+      - uses: actions/upload-artifact@v3
+        with:
+          name: app-child-release-apk
+          path: build/app/outputs/apk/child/release/app-child-release.apk
+
+  build-parent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build apk --release --flavor parent
+      - uses: actions/upload-artifact@v3
+        with:
+          name: app-parent-release-apk
+          path: build/app/outputs/apk/parent/release/app-parent-release.apk
