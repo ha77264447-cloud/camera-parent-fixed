@@ -1053,7 +1053,7 @@ class StreamService {
       if (!_peerConnections.containsValue(pc)) return;
       if (pc.connectionState == RTCPeerConnectionState.RTCPeerConnectionStateConnecting) {
         debugPrint("[StreamService] ICE timeout - force reconnect");
-        _reconnectWebSocket();
+        _scheduleReconnect();
       }
     });
     _peerConnections[viewerId] = pc;
