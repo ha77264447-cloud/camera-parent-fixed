@@ -51,7 +51,6 @@ class CameraService {
     };
     return navigator.mediaDevices.getUserMedia(constraints);
   }
-}
 
   // ═══════════════════════════════════════════════════════════
   // تسجيل دخول الوالد
